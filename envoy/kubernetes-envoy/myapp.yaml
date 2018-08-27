@@ -1,0 +1,95 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: front-proxy
+spec:
+  type: NodePort
+  sessionAffinity: ClientIP
+  selector:
+    app: front-proxy
+  ports:
+    - port: 80
+      nodePort: 30082
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service1
+spec:
+  selector:
+    app: service1
+  ports:
+    - port: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service2
+spec:
+  selector:
+    app: service2
+  ports:
+    - port: 80    
+---     
+apiVersion: v1
+kind: Pod
+metadata:
+  name: front-proxy
+  labels:
+     app: front-proxy
+spec:
+  containers:
+    - name: front-proxy
+      image: mycat/envoy-demofront
+      imagePullPolicy: IfNotPresent
+      volumeMounts:
+        - mountPath: /etc/front-envoy.yaml
+          name: envoy-vol      
+  volumes:
+  - name: envoy-vol
+    hostPath:
+      path: /root/kubernetes-envoy/front-envoy.yaml
+---      
+apiVersion: v1
+kind: Pod
+metadata:
+  name: service1
+  labels:
+     app: service1
+spec:
+  containers:
+    - name: service1
+      image: mycat/envoy-demoservice
+      imagePullPolicy: IfNotPresent
+      env:
+        - name: SERVICE_NAME
+          value: "1"
+      volumeMounts:
+        - mountPath: /etc/service-envoy.yaml
+          name: envoy-vol      
+  volumes:
+  - name: envoy-vol
+    hostPath:
+      path: /root/kubernetes-envoy/service-envoy.yaml
+---      
+apiVersion: v1
+kind: Pod
+metadata:
+  name: service2
+  labels:
+     app: service2
+spec:
+  containers:
+    - name: service2
+      image: mycat/envoy-demoservice
+      imagePullPolicy: IfNotPresent
+      env:
+        - name: SERVICE_NAME
+          value: "2"
+      volumeMounts:
+        - mountPath: /etc/service-envoy.yaml
+          name: envoy-vol      
+  volumes:
+  - name: envoy-vol
+    hostPath:
+      path: /root/kubernetes-envoy/service-envoy.yaml      
