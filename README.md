@@ -19,3 +19,6 @@ Hello from behind Envoy (service 1)! hostname: service1 resolvedhostname: 10.32.
 访问 http://虚机IP:30082/service/2
 代理到 service2的地址
 Hello from behind Envoy (service 2)! hostname: service2 resolvedhostname: 10.32.0.5
+
+另外一个版本为Java Envoy Controller，动态下发Front proxy的配置信息，实现了一个迷你原型版版的istio系统
+myapp-controller.yaml 为K8s工程文件，源码在git里。
