@@ -1,0 +1,63 @@
+﻿apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+spec:
+  selector:
+    app: redis
+  ports:
+    - port: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rate-limit-server
+spec:
+  selector:
+    app: rate-limit-server
+  ports:
+    - port: 8081
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: redis
+  labels:
+     app: redis
+spec:
+  containers:
+    - name: redis
+      image: redis
+      imagePullPolicy: IfNotPresent
+---     
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rate-limit-server
+  labels:
+     app: rate-limit-server
+spec:
+  containers:
+    - name: rate-limit-server
+      image: mycat/ratelimit
+      imagePullPolicy: IfNotPresent
+      env:
+       - name : USE_STATSD
+         value: "false"
+       - name: LOG_LEVEL
+         value: "debug"
+       - name: REDIS_SOCKET_TYPE
+         value: "tcp"         
+       - name: REDIS_URL
+         value: "redis:6379"
+       - name: RUNTIME_ROOT
+         value: "/ratelimit-root"            
+       - name: RUNTIME_SUBDIRECTORY
+         value: "ratelimit-data"
+      volumeMounts:
+        - mountPath: /ratelimit-root
+          name: ratelimit-vol 
+  volumes:
+  - name: ratelimit-vol
+    hostPath:
+      path: /root/ratelimit-bin               

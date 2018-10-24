@@ -1,0 +1,14 @@
+---
+domain: rate_per_ip
+descriptors:
+  - key: remote_address
+    rate_limit:
+      unit: second
+      requests_per_unit: 1
+
+  # Black list IP
+  - key: remote_address
+    value: 192.168.18.134
+    rate_limit:
+      unit: second
+      requests_per_unit: 0
