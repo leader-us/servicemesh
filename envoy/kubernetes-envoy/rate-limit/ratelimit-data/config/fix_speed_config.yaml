@@ -1,0 +1,13 @@
+---
+domain: fix_speed
+descriptors:
+  - key: generic_key
+    value: 1
+    rate_limit:
+      unit: second
+      requests_per_unit: 1      
+  - key: generic_key
+    value: 2
+    rate_limit:
+      unit: second
+      requests_per_unit: 2
