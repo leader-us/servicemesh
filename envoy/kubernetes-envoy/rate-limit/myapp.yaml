@@ -4,6 +4,7 @@ metadata:
   name: front-proxy
 spec:
   type: NodePort
+  externalTrafficPolicy: Local
   sessionAffinity: ClientIP
   selector:
     app: front-proxy
